@@ -2,34 +2,30 @@
 // And showcase of using async / await.
 
 class Program
-    {
-        static void Main(string[] args)
+{
+	static void Main(string[] args)
         {
-			var t = new System.Threading.Tasks.Task(DownloadPageAsync);
-			t.Start();
-			Console.WriteLine("Downloading page...");
-			Console.Read();
+		var t = new System.Threading.Tasks.Task(DownloadPageAsync);
+		t.Start();
+		Console.WriteLine("Downloading page...");
+		Console.Read();
+	}
 
-		}
-
-		static async void DownloadPageAsync()
+	static async void DownloadPageAsync()
+	{
+		string targetPage = "http://en.wikipedia.org/";
+		using (HttpClient client = new HttpClient())
+		using (HttpResponseMessage response = await client.GetAsync(targetPage))
+		using (HttpContent content = response.Content)
 		{
-			string targetPage = "http://en.wikipedia.org/";
-
-			using (HttpClient client = new HttpClient())
-			using (HttpResponseMessage response = await client.GetAsync(targetPage))
-			using (HttpContent content = response.Content)
+			// ... Read the string.
+			string result = await content.ReadAsStringAsync();
+			// ... Display the result.
+			if (result != null && result.Length >= 50)
 			{
-				// ... Read the string.
-				string result = await content.ReadAsStringAsync();
-
-				// ... Display the result.
-				if (result != null &&
-					result.Length >= 50)
-				{
-					Console.WriteLine("Page downloaded.");
-					//Console.WriteLine(result);
-				}
+				Console.WriteLine("Page downloaded.");
+				//Console.WriteLine(result);
 			}
 		}
-    }
+	}
+}
